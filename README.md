@@ -57,7 +57,7 @@ Then came the third project, OpenAPI, where we open up our APIs to external comp
 And then the SSO project came to us, and we had this Voltron based on entities that we combined with each other.
 
 
-[[Images/Pasted image 20241231154516.png]]
+[["Images/Pasted image 20241231154516.png"]]
 
 The foundation of the platform is declarative and open. The platform was built on the Infrastructure as Code model. We describe everything in GitLab, which is the base for CI/CD. We always describe everything declaratively, and based on the location of the repository (Block-CC-System) a special project is created, which is called “information system” - abbreviated isys.
 
