@@ -57,7 +57,7 @@ Then came the third project, OpenAPI, where we open up our APIs to external comp
 And then the SSO project came to us, and we had this Voltron based on entities that we combined with each other.
 
 
-![[Images/Pasted image 20241231154516.png]]
+[[Images/Pasted image 20241231154516.png]]
 
 The foundation of the platform is declarative and open. The platform was built on the Infrastructure as Code model. We describe everything in GitLab, which is the base for CI/CD. We always describe everything declaratively, and based on the location of the repository (Block-CC-System) a special project is created, which is called “information system” - abbreviated isys.
 
@@ -90,7 +90,7 @@ The other type is confidential clients. They have the same set of data that we h
 
 Let's take a look at the diagram.
 
-![[Pasted image 20241231154555.png]]
+[[Images/Pasted image 20241231154555.png]]
 
 There's a data source here, Active Directory, where Keycloak gets its information from. You can manage different types and mappers and get a really rich data set. An internal user can authenticate to both internal systems that are inside the platform and external systems. On top of that, we have a DMZ layer where we have a second Keycloak for external users, our customers. 
 
@@ -98,7 +98,7 @@ Now for more details on all of this.
 
 ## User patterns: internal user (bank employee)
 
-![[Pasted image 20241231154647.png]]
+[[Images/Pasted image 20241231154647.png]]
 
 In this case, we get information about the user strictly from Active Directory, which is our information center. At one time, the security service restricted us from adding new users “by hand”, so we pull all the information from AD, and new users are created only there.  
   
@@ -108,7 +108,7 @@ For each service and each system, we have a service account. In addition, we hav
 
 ## Custom Patterns: Bank Client
 
-![[Pasted image 20241231154813.png]]
+[[Images/Pasted image 20241231154813.png]]
 
 In this case, Keycloak will be a unifying center for storing client accounts. We can safely store quite large amounts of anonymized data: phone numbers, emails. Information about users is contained in the internal CDI banking system, where each user is assigned a unique identifier. Based on the phone number and e-mail, we can always pull up the user's full name from the CDI. In this way, the law on personal data is not violated, because the phone number and e-mail do not fall under it, because there is no comparison with the full name.
 
@@ -128,7 +128,7 @@ The next type of client is the Platform Service Client (PSVC). It is used for au
 
 External system client (EXSYS) are systems that are outside of our platform. They have the same set of roles as ISYS.
 
-![[Pasted image 20241231155007.png]]
+[[Images/Pasted image 20241231155007.png]]
 
 The platform service that resides in the system can seamlessly connect to other information systems or communicate with external information systems to exchange data. All of this allows you to have Keycloak in a single realm layer.
 
@@ -165,7 +165,7 @@ Within external SSO, we have a project that has emerged called RSHB ID. It is si
 
 The general scheme with external SSO looks like this:
 
-![[Pasted image 20241231155221.png]]
+[[Images/Pasted image 20241231155221.png]]
 
 It includes a number of external client services that have appeared and a large ecosystem called “Svoje”. There is a rather complex algorithm of work here, based on YAML manifests that arrive in Kubernetes and are processed by the operator. Based on them, entities are created both internally and externally.
 
