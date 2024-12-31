@@ -1,5 +1,7 @@
 # Keycloak in Enterprise: end-to-end pass-through of front-end and back-end services
 
+### Source: https://habr.com/en/companies/rshb/articles/724508/ - kudos to Константин Белкин for an amazing article
+
 Keycloak for us is the central system for authorization and authentication of all external and internal users. We have “made friends” with other systems and services, raced it with different loads, and we want to share our overall impression.
 
 Here is a story about how everything is organized under the hood, as well as the pros and cons of working with Keycloak, which we have noticed over the past two years.
