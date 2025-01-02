@@ -105,29 +105,29 @@ Service Mesh manages traffic between services, diagnoses errors. It is designed 
 
 Kubernetes and Istio together provide a huge number of features that applications don't need to implement on their own, such as: 
 
-    Container startup and management, orchestration;
+* Container startup and management, orchestration;
 
-    Application isolation and compute resource management;
+* Application isolation and compute resource management;
 
-    Service discovery;
+* Service discovery;
 
-    Traffic balancing;
+* Traffic balancing;
 
-    Application scaling;
+* Application scaling;
 
-    Various upgrade and rollback strategies.
+* Various upgrade and rollback strategies.
 
 And also provide features such as:
 
-    Traffic introspection and monitoring of network interactions;
+* Traffic introspection and monitoring of network interactions;
 
-    Two-way graph encryption;
+* Two-way graph encryption;
 
-    Service Grid - the ability to get information about all applications and their interactions;
+* Service Grid - the ability to get information about all applications and their interactions;
 
-    Integration with other infrastructure components: tracing, logging, monitoring;
+* Integration with other infrastructure components: tracing, logging, monitoring;
 
-    Authentication and authorization of services.
+* Authentication and authorization of services.
 
 ## Monitoring: VictoriaMetrics + Grafana
 
@@ -233,3 +233,154 @@ Below is a list of App.Farm multi-tenant infrastructure serving all divisions of
 * Logging stack (indexes);
 
 * Monitoring Stack (indexes).
+
+### GitOps + IaC + Flow
+
+GitOps is a software development methodology based on the rule that “everything is code”. This means that no manual customization or configuration activities are used when deploying applications, everything must be described declaratively as code under the control of a version control system and applied using CI/CD tools. 
+
+We follow this approach not only for custom applications, but also for the development of the platform itself, including its infrastructure components (IaC - infrastructure as code).
+
+The App.Farm platform delivers as code:
+
+* Application source code;
+
+* Application configuration (environment variables, computational resources, metadata, scaling information, upgrade method, and more). The exception is secrets (logins/passwords/keys, etc.) - they are stored in a special Vault secrets repository and must be referenced in the source code;
+
+* Documentation;
+
+* Additional configuration in the form of files required by applications (e.g. XML schemas);
+
+* Monitoring dashboards;
+
+* Dependencies on other services (runtime bindings);
+
+* Database usage information;
+
+* Roles, endpoint access rules;
+
+* Kafka brokers and topics;
+
+* CI/CD Flow used by the application.
+
+The platform provides ready-made CI/CD sets. We call them CI/CD Flow. They are plugged by users into their repository with a couple of lines like a plugin.
+
+A complete Flow typically consists of the following steps:
+
+* Validating the project against the platform requirements;
+
+* Building the artifact and container from source code;
+
+* Checking the source code against community accepted standards: looking for bugs or “bad” code;
+
+* Running tests and reporting test results and the level of code coverage by tests;
+
+* Security checks of source code, dependencies and container;
+
+* Publishing the built container and/or artifact to the artifact registry;
+
+* Deploying the application in one of the platform environments.
+
+![image](https://github.com/user-attachments/assets/2725bdbf-5512-4fce-9cb6-7f9d70092634)
+
+Since recently we have started to support specialized OCI-Flow, which allows us to run ready-made application containers on the platform. That is, we are ready to support any application packaged in an image and provided to us by a vendor or developer, formed according to our rules and standards.
+
+When onboarding new products to the App.Farm platform, we give preference to those developments that utilize technologies supported by App.Farm. If a potential product uses a technology we don't support, we do a preliminary evaluation and planning of that technology, and only then can the developer continue onboarding the product.
+
+We offer to move to App.Farm CI/CD and ready flow without the need to modify them to the specifics of the contractor, division or team that has developed there over time. That is, it is desirable to put applications into universal replicable flows, the rules for which have been formed by the global community, not by a single team.
+Checking the source code against community accepted standards: looking for bugs or “bad” code;
+
+Running tests and reporting test results and the level of code coverage by tests; Security checks of source code, dependencies and container;
+
+![image](https://github.com/user-attachments/assets/79a208ac-4ff2-4323-be4f-d72db748b09b)
+
+In the platform there are specifications for declarative description of various entities: Divisions and their Resource Pools, System, Service, Communication, Database Access, Kafka Clusters and Kafka Topics, Artemis Queues, etc. - are the APIs of the platform. All these entities are declared in git repositories, have history and access control - you can find out the state at any point in time. CI/CD is used to bring the state in the cluster to the declared state in the specification.
+
+Thus, modification of platform entities, either from low-level components, by means of custom applications is not available in the platform. For example, services / pods, network accesses, roles and permissions. In addition, arbitrary code execution is not available, as the code must be pre-built and tested in the development loop and then reused in the product. Onboarding should pay attention to the compatibility of potential systems with this declarative development approach.
+
+## Integration mechanisms
+
+Integration on the platform is one of the core functionalities of App.Farm. 
+
+Integration, in simple words, is the way applications or systems interact with each other. Often, systems that are deployed in App.Farm require interaction with: 
+
+* Other business systems in the platform and in the bank's loop;
+
+* Platform component infrastructures;
+
+* Bank component infrastructures (e.g. databases);
+
+* Services located on the Internet.
+
+The following integration methods are supported in App.Farm:
+
+* Cross-service integration within one system hosted in App.Farm: HTTPS (HTTP/1.1, HTTP/2, gRPC, WebSocket) and Kafka;
+
+* Cross-system integration, if both systems are hosted in App.Farm: HTTPS (HTTP/1.1, HTTP/2, gRPC, WebSocket) and Kafka;
+
+* Integration with services on the Internet: HTTPS (HTTP/1.1, HTTP/2, gRPC, WebSocket).
+
+In terms of integration methods, these are: 
+
+* Integration with enterprise infrastructure services outside of App.Farm: HTTPS (HTTP/1.1, HTTP/2, gRPC, WebSocket); SMTP; SMB;
+
+* Integration with business systems outside of App.Farm: HTTPS (HTTP/1.1, HTTP/2, gRPC, WebSocket), Kafka and Integration Bus (Based on ActiveMQ Artemis).
+
+A feature of integration interaction in App.Farm is a default ban on all network interactions, even within the same system. Simply put, you will not be able to access anything from your service. In order to open network access, a developer needs to declare an integration link in his project, in which he must specify where he wants to access and via which protocol.
+
+Thanks to integration links, the platform knows the complete dependency graph of systems and services. This information is public and is displayed on the Platform Management Portal. In addition, the linking mechanism allows system owners to know who depends on their services and who uses them. If desired, system owners can prohibit linking to their systems by granting such permission after approval.
+
+## Authentication and Authorization
+
+The App.Farm platform uses a single SSO provider built on Keycloak for authentication and authorization of users and applications, I've talked about it before. Predominantly, OIDC is used as the authentication standard. Platform-based authentication system is used for authorization of developers, their applications, as well as users of their applications. Among other things, the RSHB ID system is built on the basis of the platform authorization system.
+
+The App.Farm authorization system is integrated with the corporate directory via LDAP protocol, which stores information about users and groups. App.Farm is constantly synchronized with the directory, thanks to which it has up-to-date domain information.
+
+When onboarding new products, you should pay attention to several things related to authentication and authorization. Prioritize products
+
+* Using OIDC authorization that can reuse our platform authorization;
+
+* using infrastructure that can be integrated with our OIDC platform authorization;
+
+* willing to reuse platform mechanisms for role management and endpoint access. It is worth avoiding systems that use authorization methods and protocols that are unsupported in the platform.
+
+## Application delivery format
+
+Many of the products for RSHBs are still developed by contractors. However, the products they develop may be licensed and delivered to the client in different ways. For example, we have encountered the following delivery formats: product source code, built binary artifact, Docker image.
+
+Depending on the delivery format, the App.Farm platform may have some leeway in dealing with such a product. For example, when a contractor delivers source code, the platform can:
+
+* Fully analyze it for vulnerabilities;
+
+* Analyze the quality of the code;
+
+* Apply replicated flow to build and run;
+
+* Guarantee the quality of the built application as it is built by the platform;
+
+* Ability to improve the product independently (if the license allows), for example, to fix an emergency bug before the contractor does it.
+
+When onboarding new products at App.Farm, we give preference to products that are delivered as source code and licenses that allow us to work with and modify such source code. In the event that source code delivery is not possible, the next highest priority is delivery in the form of a binary artifact. For example, for Java applications it can be a set of jar files. If the binary artifact is not supplied by the contractor, then the option remains in the form of OCI-image delivery, but in compliance with our requirements on formation and rules of image/application preparation and operation.
+
+## Bottom line, opportunities and future plans
+
+With the introduction of App.Farm, the development and support stack has become more rigorous, there is no longer a zoo of technologies. Automation and the transition of the entire bank to unified CI/CD approaches has made it possible to make cross-functional teams that know that when you move from one team to another you can just start writing code.
+
+The software development cost has been reduced by lowering the threshold for entry into the development technology stack. Currently in the system: 2,300 users (CI/CD), 197 systems, 3,300 integration flows. PaaS platform App.Farm provides 6.5 million events per hour or more, and supports more than 12 integration types. No Vendor Lock-in. External contractors do not participate in development.
+
+Now, thanks to the versatility and convenience of the platform, 612 microservices, 50 internal and 147 external systems are served in App.Farm:
+
+* 612 microservices, 50 internal and 147 external systems are served;
+
+* 2,296 connections and 2,800 integration requests are processed per second.
+
+In addition, 21 vendor products have been adapted to App.Farm for centralized work with the solution and 290 external integrations have been performed through OpenAPI functionality for 30 customers.
+
+We have implementation plans in the near future:
+
+* S3 as a Service;
+
+* Redis as a Service;
+
+* PostgreSQL as a Service;
+
+* Deployment capabilities development on the platform: support for Stateful applications, App Review, Canary / Blue-Green Deployment.
