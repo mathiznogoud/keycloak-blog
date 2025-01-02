@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/716b0ea6-c962-4937-aa1f-2b415a024a99)# How to implement CI/CD for all developers in a bank. CI/CD by App.Farm
+# How to implement CI/CD for all developers in a bank. CI/CD by App.Farm
 
 ### Intro
 Hi! My name is Konstantin Belkin, I am Teamlead SRE at RSHB-Intech. Today I will tell you what CI/CD on the App.Farm platform is, what methodologies we use in our work, how the platform works, what tools we provide to developers and how we organized CI/CD in RSHB for our favorite developers.
